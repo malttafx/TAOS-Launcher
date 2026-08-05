@@ -1,0 +1,6 @@
+{
+    "_comment": "TAOS Houdini package — v1: marks the TAOS env inside Houdini (check with hou.getenv('TAOS_LOADED')). Future: append HOUDINI_PATH entries for TAOS shelves/HDAs on the drive.",
+    "env": [
+        { "TAOS_LOADED": "1" }
+    ]
+}

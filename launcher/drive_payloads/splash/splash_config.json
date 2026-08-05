@@ -1,0 +1,21 @@
+{
+  "_comment": "Per-DCC boot-splash footprint (PHYSICAL px). w/h = size of the DCC's own splash to cover; x/y = nudge from screen center (x positive = right, y positive = down). Edit + relaunch the DCC - no launcher rebuild needed.",
+  "max": {
+    "w": 860,
+    "h": 532,
+    "x": 1,
+    "y": 0
+  },
+  "maya": {
+    "w": 860,
+    "h": 532,
+    "x": 1,
+    "y": -36
+  },
+  "houdini": {
+    "w": 1030,
+    "h": 580,
+    "x": 0,
+    "y": 20
+  }
+}
