@@ -18,15 +18,16 @@ LAUNCHER_REL = os.path.join("pipeline", "launcher")
 PAYLOADS_REL = os.path.join(LAUNCHER_REL, "payloads")
 DEFAULTS_REL = os.path.join(LAUNCHER_REL, "defaults.json")
 
-DCCS = ["maya", "max", "houdini"]
-LABELS = {"maya": "Maya", "max": "3ds Max", "houdini": "Houdini"}
-EXES = {"maya": "maya.exe", "max": "3dsmax.exe", "houdini": "houdinifx.exe"}
+DCCS = ["maya", "max", "houdini", "nuke"]
+LABELS = {"maya": "Maya", "max": "3ds Max", "houdini": "Houdini", "nuke": "Nuke"}
+EXES = {"maya": "maya.exe", "max": "3dsmax.exe", "houdini": "houdinifx.exe", "nuke": "Nuke16.0.exe"}
 
 # Shipped fallback defaults (used when drive defaults.json is unreachable)
 HARDCODED_DEFAULTS = {
     "maya": r"C:\Program Files\Autodesk\Maya2026\bin",
     "max": r"C:\Program Files\Autodesk\3ds Max 2026",
     "houdini": r"C:\Program Files\Side Effects Software\Houdini 21.0.440\bin",
+    "nuke": r"C:\Program Files\Nuke16.0v8",
 }
 
 # What a "complete" payload looks like, if drive defaults.json doesn't say
@@ -34,6 +35,7 @@ BUILTIN_MANIFEST = {
     "maya": ["env.json", os.path.join("scripts", "userSetup.py")],
     "max": ["env.json", os.path.join("startup", "taos_startup.ms")],
     "houdini": ["env.json", os.path.join("packages", "taos.json")],
+    "nuke": ["env.json", "init.py", "menu.py"],
 }
 
 CONFIG_DIR = Path(os.environ.get("APPDATA", str(Path.home()))) / "TAOS"

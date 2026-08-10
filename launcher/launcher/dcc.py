@@ -49,6 +49,8 @@ def build_env(cfg, dcc):
             env["ADSK_3DSMAX_STARTUPSCRIPTS_ADDON_DIR"] = os.path.join(pdir, "startup")
         elif dcc == "houdini":
             _prepend(env, "HOUDINI_PACKAGE_DIR", os.path.join(pdir, "packages"))
+        elif dcc == "nuke":
+            _prepend(env, "NUKE_PATH", pdir)
     return env
 
 

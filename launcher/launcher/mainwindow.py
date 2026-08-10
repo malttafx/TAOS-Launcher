@@ -21,6 +21,7 @@ ICON = {
     "maya": "icons/taos_launcher_maya_bt.png",
     "max": "icons/taos_launcher_max_bt.png",
     "houdini": "icons/taos_launcher_houdini_bt.png",
+    "nuke": "icons/taos_launcher_nuke_bt.png",
 }
 
 
@@ -114,7 +115,7 @@ class MainWindow(QMainWindow):
         panel.addWidget(title)
 
         self.dcc_fields = {}
-        for d in ["maya", "max", "houdini"]:
+        for d in C.DCCS:
             f = LockField(
                 "%s:" % C.LABELS[d],
                 locked=self.cfg.locks[d], with_reset=True,
