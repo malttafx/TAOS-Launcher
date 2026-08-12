@@ -3,6 +3,16 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# macOS metadata
+.DS_Store
+._*
+
+# macOS application build outputs
+*.app/
+*.dSYM/
+*.dmg
+*.pkg
+
 # C extensions
 *.so
 

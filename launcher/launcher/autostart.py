@@ -1,4 +1,5 @@
 """Opt-in 'Start with Windows' via HKCU Run key. Never set without user consent."""
+import os
 import sys
 
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
@@ -12,6 +13,8 @@ def _exe_command():
 
 
 def set_autostart(enabled):
+    if os.name != "nt":
+        return False
     try:
         import winreg
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, RUN_KEY, 0,

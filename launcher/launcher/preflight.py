@@ -50,3 +50,14 @@ def validate_folder(path, must_contain=None):
     if must_contain and not os.path.isfile(os.path.join(path, must_contain)):
         return "Folder exists but does not contain %s:\n%s" % (must_contain, path)
     return None
+
+
+def validate_dcc_path(path, dcc):
+    problem = validate_folder(path)
+    if problem:
+        return problem
+    exe = C.executable_path(dcc, path)
+    if not exe or not os.path.isfile(exe):
+        return "Folder exists but does not contain the %s executable:\n%s" % (
+            C.LABELS[dcc], path)
+    return None

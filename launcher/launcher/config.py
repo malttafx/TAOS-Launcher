@@ -30,6 +30,13 @@ HARDCODED_DEFAULTS = {
     "nuke": r"C:\Program Files\Nuke16.0v8",
 }
 
+MACOS_DEFAULTS = {
+    "maya": "/Applications/Autodesk/maya2026/Maya.app",
+    "max": "",
+    "houdini": "/Applications/Houdini/Houdini21.0.440",
+    "nuke": "/Applications/Nuke17.0v3/Nuke17.0v3.app",
+}
+
 # What a "complete" payload looks like, if drive defaults.json doesn't say
 BUILTIN_MANIFEST = {
     "maya": ["env.json", os.path.join("scripts", "userSetup.py")],
@@ -173,8 +180,10 @@ class Config:
 
     def default_path(self, dcc):
         """Current team default for a DCC folder (drive first, hardcoded fallback)."""
-        d = self.drive_defaults().get("dcc_defaults", {}).get(dcc)
-        return d if d else HARDCODED_DEFAULTS[dcc]
+        defaults_key = "dcc_defaults_macos" if sys.platform == "darwin" else "dcc_defaults"
+        fallback = MACOS_DEFAULTS if sys.platform == "darwin" else HARDCODED_DEFAULTS
+        d = self.drive_defaults().get(defaults_key, {}).get(dcc)
+        return d if d else fallback[dcc]
 
     def manifest(self, dcc):
         m = self.drive_defaults().get("payload_manifest", {}).get(dcc)
@@ -186,4 +195,30 @@ class Config:
         return self.paths[dcc] if self.paths[dcc] else self.default_path(dcc)
 
     def exe_path(self, dcc):
-        return os.path.join(self.dcc_folder(dcc), EXES[dcc])
+        return executable_path(dcc, self.dcc_folder(dcc))
+
+
+def dcc_supported(dcc):
+    return not (sys.platform == "darwin" and dcc == "max")
+
+
+def executable_path(dcc, folder):
+    if sys.platform != "darwin":
+        return os.path.join(folder, EXES[dcc])
+
+    # macOS defaults point at .app bundles (or, for Houdini, its version
+    # directory). Resolve their actual binaries so the TAOS environment is
+    # inherited directly by the DCC process.
+    candidates = {
+        "maya": [os.path.join(folder, "Contents", "MacOS", "Maya")],
+        "nuke": [os.path.join(folder, "Contents", "MacOS", "Nuke17.0")],
+        "houdini": [
+            os.path.join(folder, "Houdini FX 21.0.440.app", "Contents", "MacOS",
+                         "houdinifx"),
+            os.path.join(folder, "Frameworks", "Houdini.framework", "Versions",
+                         "Current", "Resources", "bin", "houdinifx"),
+        ],
+        "max": [],
+    }[dcc]
+    return next((p for p in candidates if os.path.isfile(p)),
+                candidates[0] if candidates else "")
