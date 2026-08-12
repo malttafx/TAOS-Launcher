@@ -20,14 +20,14 @@ DEFAULTS_REL = os.path.join(LAUNCHER_REL, "defaults.json")
 
 DCCS = ["maya", "max", "houdini", "nuke"]
 LABELS = {"maya": "Maya", "max": "3ds Max", "houdini": "Houdini", "nuke": "Nuke"}
-EXES = {"maya": "maya.exe", "max": "3dsmax.exe", "houdini": "houdinifx.exe", "nuke": "Nuke16.0.exe"}
+EXES = {"maya": "maya.exe", "max": "3dsmax.exe", "houdini": "houdinifx.exe", "nuke": "Nuke17.0.exe"}
 
 # Shipped fallback defaults (used when drive defaults.json is unreachable)
 HARDCODED_DEFAULTS = {
     "maya": r"C:\Program Files\Autodesk\Maya2026\bin",
     "max": r"C:\Program Files\Autodesk\3ds Max 2026",
     "houdini": r"C:\Program Files\Side Effects Software\Houdini 21.0.440\bin",
-    "nuke": r"C:\Program Files\Nuke16.0v8",
+    "nuke": r"C:\Program Files\Nuke17.0v3",
 }
 
 # What a "complete" payload looks like, if drive defaults.json doesn't say

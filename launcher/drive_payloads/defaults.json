@@ -4,12 +4,17 @@
     "maya": "C:\\Program Files\\Autodesk\\Maya2026\\bin",
     "max": "C:\\Program Files\\Autodesk\\3ds Max 2026",
     "houdini": "C:\\Program Files\\Side Effects Software\\Houdini 21.0.440\\bin",
-    "nuke": "C:\\Program Files\\Nuke16.0v8"
+    "nuke": "C:\\Program Files\\Nuke17.0v3"
+  },
+  "dcc_defaults_macos": {
+    "maya": "/Applications/Autodesk/maya2026/Maya.app",
+    "houdini": "/Applications/Houdini/Houdini21.0.440",
+    "nuke": "/Applications/Nuke17.0v3/Nuke17.0v3.app"
   },
   "payload_manifest": {
     "maya": ["env.json", "scripts/userSetup.py"],
     "max": ["env.json", "startup/taos_startup.ms"],
-    "houdini": ["env.json", "packages/taos.json"]
+    "houdini": ["env.json", "packages/taos.json"],
     "nuke": ["env.json", "init.py", "menu.py"]
   }
 }

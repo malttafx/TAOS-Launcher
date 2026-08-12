@@ -17,7 +17,6 @@ from .config import log
 DETACHED_PROCESS = 0x00000008
 CREATE_NEW_PROCESS_GROUP = 0x00000200
 
-
 def _prepend(env, key, value):
     old = env.get(key, "")
     env[key] = value + (os.pathsep + old if old else "")
@@ -25,11 +24,23 @@ def _prepend(env, key, value):
 
 def build_env(cfg, dcc):
     env = dict(os.environ)
+    # Prevent Python environment from the TAOS launcher
+    # leaking into Nuke.
+    if dcc == "nuke":
+        for key in [
+            "PYTHONHOME",
+            "PYTHONPATH",
+            "VIRTUAL_ENV",
+            "PYTHONSTARTUP",
+        ]:
+            env.pop(key, None)
+
     env[C.ENV_VAR] = cfg.drive
     env["TAOS_LAUNCHER_VERSION"] = __version__
     env["TAOS_DCC"] = dcc
 
     pdir = cfg.payload_dir(dcc)
+
     if os.path.isdir(pdir):
         # payload-declared env vars ({TAOSDRIVE} expands to the drive path)
         env_json = os.path.join(pdir, "env.json")
@@ -62,13 +73,23 @@ def launch(cfg, dcc):
     """
     exe = cfg.exe_path(dcc)
     try:
-        proc = subprocess.Popen(
-            [exe],
-            env=build_env(cfg, dcc),
-            cwd=os.path.dirname(exe) if os.path.isdir(os.path.dirname(exe)) else None,
-            creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
-            close_fds=True,
-        )
+        if dcc == "nuke":
+            proc = subprocess.Popen(
+                [exe],
+                env=build_env(cfg, dcc),
+                cwd=os.path.dirname(exe) if os.path.isdir(os.path.dirname(exe)) else None,
+                close_fds=True,
+            )
+
+        else:
+            proc = subprocess.Popen(
+                [exe],
+                env=build_env(cfg, dcc),
+                cwd=os.path.dirname(exe) if os.path.isdir(os.path.dirname(exe)) else None,
+                creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
+                close_fds=True,
+            )
+        
     except OSError as e:
         log("launch failed %s: %s" % (dcc, e))
         return False, "%s failed to launch: %s" % (C.LABELS[dcc], e), None
