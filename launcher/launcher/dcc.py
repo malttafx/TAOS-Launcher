@@ -72,24 +72,26 @@ def launch(cfg, dcc):
     early-exit detection); the DCC still runs fully detached.
     """
     exe = cfg.exe_path(dcc)
+    
     try:
-        if dcc == "nuke":
-            proc = subprocess.Popen(
-                [exe],
-                env=build_env(cfg, dcc),
-                cwd=os.path.dirname(exe) if os.path.isdir(os.path.dirname(exe)) else None,
-                close_fds=True,
-            )
+        kwargs = {
+            "env": build_env(cfg, dcc),
+            "cwd": os.path.dirname(exe) if os.path.isdir(os.path.dirname(exe)) else None,
+            "close_fds": True,
+        }
 
+        if os.name == "nt":
+            # Nuke must launch without Windows creation flags.
+            # Using DETACHED_PROCESS / CREATE_NEW_PROCESS_GROUP
+            # causes an extra console/window to appear.
+            if dcc != "nuke":
+                kwargs["creationflags"] = DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
         else:
-            proc = subprocess.Popen(
-                [exe],
-                env=build_env(cfg, dcc),
-                cwd=os.path.dirname(exe) if os.path.isdir(os.path.dirname(exe)) else None,
-                creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
-                close_fds=True,
-            )
-        
+            # macOS / Linux
+            kwargs["start_new_session"] = True
+
+        proc = subprocess.Popen([exe], **kwargs)
+      
     except OSError as e:
         log("launch failed %s: %s" % (dcc, e))
         return False, "%s failed to launch: %s" % (C.LABELS[dcc], e), None

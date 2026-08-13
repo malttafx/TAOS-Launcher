@@ -1,8 +1,13 @@
 # TAOS Launcher
 
-One window, three buttons. Sets `TAOSDRIVE` and per-DCC TAOS setup at launch.
+One window, four buttons. Sets `TAOSDRIVE` and per-DCC TAOS setup at launch.
 Thin shell (.exe) + drive-side payloads: updating what a launch *does* is a
 file copy to the TAOS drive — nobody reinstalls anything.
+
+Windows supports Maya, 3ds Max, Houdini, and Nuke. macOS supports Maya,
+Houdini, and Nuke; 3ds Max is disabled because Autodesk does not ship it for
+macOS. Platform defaults live in `defaults.json` under `dcc_defaults` and
+`dcc_defaults_macos` respectively.
 
 See `SPEC.md` for the full design contract and `HANDOFF.md` for the
 build/version/deploy procedure (pipeline TD ownership doc).
@@ -21,6 +26,7 @@ build/version/deploy procedure (pipeline TD ownership doc).
 | `drive_payloads/` | **Template for the TAOS drive** — copy to `<TAOSDRIVE>\pipeline\launcher\` |
 | `icons/` | Logo + DCC button art (from Delcio's mock) |
 | `build.bat`, `make_ico.py`, `make_version_info.py` | One-command exe build (+ version stamp) |
+| `build_macos.sh` | Native macOS `.app` build (+ version stamp and ad-hoc signing) |
 | `release.bat`, `bump_version.py`, `drive_path.py` | Bump version, build, deploy to the drive |
 | `HANDOFF.md` | Owner doc: versioning, deploy targets, traps |
 
@@ -32,6 +38,18 @@ build/version/deploy procedure (pipeline TD ownership doc).
 ## Build the exe
 
     build.bat            → dist\TAOS_Launcher.exe
+
+## Build the macOS app
+
+Run this on macOS; PyInstaller builds separately for each operating system.
+
+    ./build_macos.sh     → dist/TAOS_Launcher.app
+
+The script creates a windowed, on-directory application bundle using the active
+Python installation's architecture, then applies an ad-hoc signature for
+internal testing. On Apple Silicon, use an arm64 Python to avoid requiring
+Rosetta. Distribution outside the team should use an Apple Developer ID
+signature and notarization.
 
 ## Cut a new version
 
@@ -68,8 +86,9 @@ See `HANDOFF.md`.
 - **Maya** — payload `scripts\` is prepended to `PYTHONPATH`; `userSetup.py` runs.
 - **3ds Max** — `ADSK_3DSMAX_STARTUPSCRIPTS_ADDON_DIR` points at payload `startup\`.
 - **Houdini** — payload `packages\` is prepended to `HOUDINI_PACKAGE_DIR`.
+- **Nuke** — the payload root is prepended to `NUKE_PATH`.
 
-All three receive `TAOSDRIVE`, `TAOS_DCC`, `TAOS_LAUNCHER_VERSION`, plus
+All supported DCCs receive `TAOSDRIVE`, `TAOS_DCC`, `TAOS_LAUNCHER_VERSION`, plus
 anything declared in the payload's `env.json` (`{TAOSDRIVE}` expands).
 
 ## Config & logs

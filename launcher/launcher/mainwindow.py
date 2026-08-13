@@ -87,6 +87,9 @@ class MainWindow(QMainWindow):
             b.setToolTip("Launch %s" % C.LABELS[d])
             b.setCursor(Qt.PointingHandCursor)
             b.clicked.connect(lambda checked=False, x=d: self.launch_dcc(x))
+            if not C.dcc_supported(d):
+                b.setEnabled(False)
+                b.setToolTip("%s is not available on macOS" % C.LABELS[d])
             btn_row.addWidget(b)
             self.dcc_buttons[d] = b
         btn_row.addStretch()
@@ -119,17 +122,20 @@ class MainWindow(QMainWindow):
             f = LockField(
                 "%s:" % C.LABELS[d],
                 locked=self.cfg.locks[d], with_reset=True,
-                validator=lambda p, x=d: preflight.validate_folder(p, C.EXES[x]),
+                validator=lambda p, x=d: preflight.validate_dcc_path(p, x),
                 label_width=70)
             f.setText(self.cfg.paths[d] if self.cfg.paths[d] else self.cfg.default_path(d))
             f.lockCommitted.connect(lambda text, x=d: self._on_dcc_locked(x, text))
             f.resetRequested.connect(lambda x=d: self._on_dcc_reset(x))
             panel.addWidget(f)
             self.dcc_fields[d] = f
+            if not C.dcc_supported(d):
+                f.setEnabled(False)
 
         self.autostart_cb = QCheckBox("Start with Windows (in tray)")
         self.autostart_cb.setChecked(self.cfg.autostart)
         self.autostart_cb.toggled.connect(self._on_autostart)
+        self.autostart_cb.setVisible(os.name == "nt")
         panel.addWidget(self.autostart_cb)
 
         self.settings_panel.setVisible(False)
@@ -158,8 +164,8 @@ class MainWindow(QMainWindow):
 
     def _refresh_buttons(self):
         ok = self.cfg.drive_ok()
-        for b in self.dcc_buttons.values():
-            b.setEnabled(ok)
+        for d, b in self.dcc_buttons.items():
+            b.setEnabled(ok and C.dcc_supported(d))
 
     def _on_drive_locked(self, text):
         self.cfg.drive = text
@@ -251,7 +257,7 @@ class MainWindow(QMainWindow):
             msg += " · %d warning(s), see log" % len(warnings)
             log("launched %s with warnings: %s" % (d, " | ".join(warnings)))
         self.set_status(msg, "ok" if ok else "error")
-        if ok and proc is not None:
+        if ok and proc is not None and os.name == "nt":
             # branded boot splash - drawn by this process so it stays painted
             # while the DCC's own UI thread is busy loading plugins
             # per-DCC art first (taos_splash_max.png etc.), generic fallback

@@ -11,6 +11,11 @@
     "houdini": "/Applications/Houdini/Houdini21.0.440",
     "nuke": "/Applications/Nuke17.0v3/Nuke17.0v3.app"
   },
+  "dcc_defaults_macos": {
+    "maya": "/Applications/Autodesk/maya2026/Maya.app",
+    "houdini": "/Applications/Houdini/Houdini21.0.440",
+    "nuke": "/Applications/Nuke17.0v3/Nuke17.0v3.app"
+  },
   "payload_manifest": {
     "maya": ["env.json", "scripts/userSetup.py"],
     "max": ["env.json", "startup/taos_startup.ms"],

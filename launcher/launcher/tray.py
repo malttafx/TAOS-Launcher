@@ -12,6 +12,8 @@ def create_tray(window, icon_path):
 
     menu = QMenu()
     for dcc in C.DCCS:
+        if not C.dcc_supported(dcc):
+            continue
         act = QAction("Launch %s" % C.LABELS[dcc], menu)
         act.triggered.connect(lambda checked=False, d=dcc: window.launch_dcc(d))
         menu.addAction(act)
