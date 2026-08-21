@@ -12,6 +12,7 @@ from pathlib import Path
 
 APP_NAME = "TAOS Launcher"
 ENV_VAR = "TAOSDRIVE"
+LOCAL_MIRROR_ENV_VAR = "TAOS_LOCAL_MIRROR_FOLDER"
 
 # Relative location of launcher assets on the TAOS drive
 LAUNCHER_REL = os.path.join("pipeline", "launcher")
@@ -104,6 +105,8 @@ class Config:
     def __init__(self):
         self.drive = ""
         self.drive_locked = False
+        self.local_mirror_folder = ""
+        self.local_mirror_locked = False
         self.paths = {d: "" for d in DCCS}       # empty = use default
         self.locks = {d: True for d in DCCS}     # DCC fields ship locked
         self.autostart = False
@@ -125,6 +128,8 @@ class Config:
             return
         self.drive = data.get("drive", "")
         self.drive_locked = data.get("drive_locked", False)
+        self.local_mirror_folder = data.get("local_mirror_folder", "")
+        self.local_mirror_locked = data.get("local_mirror_locked", False)
         for d in DCCS:
             self.paths[d] = data.get("paths", {}).get(d, "")
             self.locks[d] = data.get("locks", {}).get(d, True)
@@ -139,6 +144,8 @@ class Config:
             CONFIG_FILE.write_text(json.dumps({
                 "drive": self.drive,
                 "drive_locked": self.drive_locked,
+                "local_mirror_folder": self.local_mirror_folder,
+                "local_mirror_locked": self.local_mirror_locked,
                 "paths": self.paths,
                 "locks": self.locks,
                 "autostart": self.autostart,
