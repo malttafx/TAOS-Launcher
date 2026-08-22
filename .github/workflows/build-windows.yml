@@ -1,0 +1,31 @@
+name: Build Windows launcher
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: launcher
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Build executable
+        shell: cmd
+        run: build.bat
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v6
+        with:
+          name: TAOS-Launcher-Windows
+          path: launcher/dist/TAOS_Launcher.exe
