@@ -113,6 +113,16 @@ class MainWindow(QMainWindow):
         panel.setContentsMargins(0, 4, 0, 4)
         panel.setSpacing(10)
 
+        self.local_mirror_field = LockField(
+            "Local file mirror location:",
+            placeholder="Folder for local copies of remote files",
+            locked=self.cfg.local_mirror_locked,
+            validator=lambda p: preflight.validate_folder(p),
+            label_width=155)
+        self.local_mirror_field.setText(self.cfg.local_mirror_folder)
+        self.local_mirror_field.lockCommitted.connect(self._on_local_mirror_locked)
+        panel.addWidget(self.local_mirror_field)
+
         title = QLabel("set default software path")
         title.setAlignment(Qt.AlignCenter)
         panel.addWidget(title)
@@ -186,6 +196,12 @@ class MainWindow(QMainWindow):
         self.cfg.locks[d] = True
         self.cfg.save()
         self.set_status("%s path saved" % C.LABELS[d])
+
+    def _on_local_mirror_locked(self, text):
+        self.cfg.local_mirror_folder = text
+        self.cfg.local_mirror_locked = True
+        self.cfg.save()
+        self.set_status("Local file mirror location saved")
 
     def _on_dcc_reset(self, d):
         self.dcc_fields[d].setText(self.cfg.default_path(d))

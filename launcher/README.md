@@ -88,10 +88,12 @@ See `HANDOFF.md`.
 - **Houdini** — payload `packages\` is prepended to `HOUDINI_PACKAGE_DIR`.
 - **Nuke** — the payload root is prepended to `NUKE_PATH`.
 
-All supported DCCs receive `TAOSDRIVE`, `TAOS_DCC`, `TAOS_LAUNCHER_VERSION`, plus
-anything declared in the payload's `env.json` (`{TAOSDRIVE}` expands).
+All supported DCCs receive `TAOSDRIVE`, `TAOS_LOCAL_MIRROR_FOLDER`, `TAOS_DCC`,
+`TAOS_LAUNCHER_VERSION`, plus anything declared in the payload's `env.json`
+(`{TAOSDRIVE}` expands).
 
 ## Config & logs
 
-- User config: `%APPDATA%\TAOS\launcher_config.json` (written on lock)
+- User config: `%APPDATA%\TAOS\launcher_config.json` (written on lock; includes
+  the local file mirror location)
 - Log: `%APPDATA%\TAOS\launcher.log`

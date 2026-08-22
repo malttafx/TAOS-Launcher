@@ -36,6 +36,7 @@ def build_env(cfg, dcc):
             env.pop(key, None)
 
     env[C.ENV_VAR] = cfg.drive
+    env[C.LOCAL_MIRROR_ENV_VAR] = cfg.local_mirror_folder
     env["TAOS_LAUNCHER_VERSION"] = __version__
     env["TAOS_DCC"] = dcc
 
